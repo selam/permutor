@@ -82,7 +82,7 @@ func (s *RandomPermutation) reset() {
 	s.Bitset = bitset.New(uint(s.MaxPossibility))
 }
 
-func (s *RandomPermutation) Generate() (string) {
+func (s *RandomPermutation) Generate() (string, int) {
 	s.l.Lock()
 	defer s.l.Unlock()
 	for {
@@ -102,7 +102,7 @@ func (s *RandomPermutation) Generate() (string) {
 		}
 
 	}
-	return s.permute()
+	return s.permute(), s.CurrentPossibility
 }
 
 func (s *RandomPermutation) marshal() ([]byte, error) {

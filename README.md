@@ -32,10 +32,12 @@ func main() {
         fmt.Printf("there is a error in parameters %s\n", err.Error());
         return
    }
-   letters := rp.Generate()
+   letters, posibility := rp.Generate()
    if letters == "" {
       fmt.Println("all posilible elements are already created, you can reset or finish")
    }
+
+   fmt.Printf("%d pobisibility is %s\n", possibility, letters)
 
    err = rp.SaveTo("/path/to/file.json")  // so you can read from another lib writed another language
    if err != nil {
@@ -49,7 +51,7 @@ func main() {
           return // or do it something else
    }
 
-   letters = second.Generate() // letters already defined
+   letters, _ = second.Generate() // letters already defined
    if letters == "" {
          fmt.Println("all posilible elements are already created, you can reset or finish")
          return
