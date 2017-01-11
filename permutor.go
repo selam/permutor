@@ -16,7 +16,9 @@ var (
 	MaxError = errors.New("max value can not bigger than max value")
 )
 
+
 type rp  struct {
+	sync.Mutex
 	MinLength          int
 	MaxLength          int
 	CurrentLength      int
@@ -25,7 +27,7 @@ type rp  struct {
 	MaxPossibility     int
 	Letters            string
 	Bitset             *bitset.BitSet
-	l                  sync.Mutex
+
 }
 
 type RandomPermutation struct {
@@ -40,7 +42,6 @@ func NewPermutor(s string, minLength int, maxLength int) (*RandomPermutation, er
 	if maxLength < minLength {
 		return nil, MaxError
 	}
-
 
 	maxPosibility := int(math.Pow(float64(len(s)), float64(minLength)))
 	return &RandomPermutation{
@@ -71,8 +72,8 @@ func (s *RandomPermutation) permute() (string) {
 }
 
 func (s *RandomPermutation) Reset() {
-	s.l.Lock()
-	defer s.l.Unlock()
+	s.Lock()
+	defer s.Unlock()
 	s.reset()
 }
 
@@ -117,8 +118,8 @@ func (s *RandomPermutation) marshal() ([]byte, error) {
 }
 
 func (s *RandomPermutation) MarshalJSON() ([]byte, error) {
-	s.rp.l.Lock()
-	defer s.rp.l.Unlock()
+	s.Lock()
+	defer s.Unlock()
 	return s.marshal()
 }
 
@@ -127,14 +128,14 @@ func (s *RandomPermutation) unmarshal(b []byte) error {
 }
 
 func (s *RandomPermutation) UnmarshalJSON(b []byte) error {
-	s.rp.l.Lock()
-	defer s.rp.l.Unlock()
+	s.Lock()
+	defer s.Unlock()
 	return s.unmarshal(b)
 }
 
 func (s *RandomPermutation) SaveTo(fname string) (error) {
-	s.rp.l.Lock()
-	defer s.rp.l.Unlock()
+	s.Lock()
+	defer s.Unlock()
 	b, err := s.marshal()
 	if err != nil {
 		return err
