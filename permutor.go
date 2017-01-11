@@ -82,27 +82,34 @@ func (s *RandomPermutation) reset() {
 	s.Bitset = bitset.New(uint(s.MaxPossibility))
 }
 
-func (s *RandomPermutation) Generate() (string, int) {
-	s.l.Lock()
-	defer s.l.Unlock()
+func (s *RandomPermutation) Generate() (string, int)  {
+	s.rp.Lock()
+	defer s.rp.Unlock()
+
+	i := 0
 	for {
-		if (s.Bitset.All()) {
-			if (s.CurrentLength < s.MaxLength) {
-				s.CurrentLength++
-				s.reset()
-				continue
-			}
-			return ""
-		}
 		rand.Seed(time.Now().UnixNano())
 		s.CurrentPossibility = rand.Intn(s.MaxPossibility)
 		if !s.Bitset.Test(uint(s.CurrentPossibility)) {
 			s.Bitset.Set(uint(s.CurrentPossibility))
 			break
 		}
+		// when letters length is big, checking all bits getting slower so if we cant find in 8 loop then check all bits
+		if i % 8 == 0 {
 
+			if (s.Bitset.All()) {
+				if (s.CurrentLength < s.MaxLength) {
+					s.CurrentLength++
+					s.reset()
+					continue
+				}
+				return "", 0
+			}
+		}
+		i++
 	}
-	return s.permute(), s.CurrentPossibility
+	pos := s.permute()
+	return pos, s.CurrentPossibility
 }
 
 func (s *RandomPermutation) marshal() ([]byte, error) {
