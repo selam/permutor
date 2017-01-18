@@ -16,6 +16,9 @@ var (
 	MaxError = errors.New("max value can not bigger than max value")
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 type rp  struct {
 	sync.Mutex
@@ -33,8 +36,16 @@ type rp  struct {
 type RandomPermutation struct {
 	rp
 }
+func max(a, b int) (int) {
+	if a < b {
+		return b
+	}
+	return a
+}
 
 func NewPermutor(s string, minLength int, maxLength int) (*RandomPermutation, error) {
+	// seed rand
+
 	if minLength > maxLength {
 		return nil, MinError
 	}
@@ -89,15 +100,13 @@ func (s *RandomPermutation) Generate() (string, int)  {
 
 	i := 0
 	for {
-		rand.Seed(time.Now().UnixNano())
-		s.CurrentPossibility = rand.Intn(s.MaxPossibility)
+		s.CurrentPossibility = rand.Intn(max(s.MaxPossibility, s.CurrentPossibility))
 		if !s.Bitset.Test(uint(s.CurrentPossibility)) {
 			s.Bitset.Set(uint(s.CurrentPossibility))
 			break
 		}
 		// when letters length is big, checking all bits getting slower so if we cant find in 8 loop then check all bits
-		if i % 8 == 0 {
-
+		if i % 20 == 0 {
 			if (s.Bitset.All()) {
 				if (s.CurrentLength < s.MaxLength) {
 					s.CurrentLength++
