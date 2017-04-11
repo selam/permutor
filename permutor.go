@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	MinError = errors.New("min value can not bigger than max value")
-	MaxError = errors.New("max value can not bigger than max value")
+	MinError = errors.New("min value can not be bigger than max value")
+	MaxError = errors.New("max value can not be smaller than min value")
 )
 
 func init() {
